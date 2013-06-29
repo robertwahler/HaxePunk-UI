@@ -71,7 +71,7 @@ class Panel extends Control
 		control.layer = this.layer - layer;
 		children.push(control);
 		
-		if (this.world == HXP.world) { HXP.world.add(control); }
+		if (this.scene == HXP.scene) { HXP.scene.add(control); }
 		
 		return control;
 	}
@@ -87,9 +87,9 @@ class Panel extends Control
 		{
 			if (children[i] == control)
 			{
-				if (HXP.world == control.world)
+				if (HXP.scene == control.scene)
 				{
-					HXP.world.remove(control);
+					HXP.scene.remove(control);
 				}
 				children.splice(i, 1);
 			}
@@ -99,7 +99,7 @@ class Panel extends Control
 	override public function added() 
 	{
 		var child:Entity;
-		for (child in children) { HXP.world.add(child); }
+		for (child in children) { HXP.scene.add(child); }
 	}
 	
 	override public function removed() 
@@ -107,9 +107,9 @@ class Panel extends Control
 		var child:Entity;
 		for (child in children)
 		{
-			if (HXP.world == child.world)
+			if (HXP.scene == child.scene)
 			{
-				HXP.world.remove(child);
+				HXP.scene.remove(child);
 			}
 		}
 	}
@@ -156,8 +156,8 @@ class Panel extends Control
 	 * 		x:	Number to set the child's x to
 	 * 		get:	Pass a Number variable to this for it to set it to the specified child's x value.
 	 */
-	public var relativeX(null, setRelativeX):Dynamic;
-	private function setRelativeX(value:Dynamic):Dynamic
+	public var relativeX(null, set_relativeX):Dynamic;
+	private function set_relativeX(value:Dynamic):Dynamic
 	{
 		if (Std.is(value, Float))
 		{
@@ -218,8 +218,8 @@ class Panel extends Control
 	 * 		y:	Number to set the child's y to
 	 * 		get:	Pass a Number variable to this for it to set it to the specified child's x value.
 	 */
-	public var relativeY(null, setRelativeY):Dynamic;
-	private function setRelativeY(value:Dynamic):Dynamic
+	public var relativeY(null, set_relativeY):Dynamic;
+	private function set_relativeY(value:Dynamic):Dynamic
 	{
 		if (Std.is(value, Float))
 		{
@@ -282,13 +282,15 @@ class Panel extends Control
 	 * 		layer:	Number to set the child's layer to
 	 * 		get:	Pass a Number variable to this for it to set it to the specified child's layer.
 	 */
-	public var Layer(null, setLayer2):Dynamic;
-	private function setLayer2(value:Dynamic):Dynamic
+	public var Layer(null, set_Layer):Dynamic;
+	private function set_Layer(value:Dynamic):Dynamic
 	{
 		if (Std.is(value, Float))
 		{
 			// set this object's layer
 			this.layer = Std.int(value);
+			
+			return this.layer;
 		}
 		else
 		{
@@ -303,11 +305,11 @@ class Panel extends Control
 						throw "specified child not found on this panel object";
 					}
 					value.get = children[index].layer;
-					return;
+					return value.get;
 				}
 				
 				trace("2:A child was not specified. No action taken");
-				return;
+				return null;
 			}
 			
 			
@@ -326,10 +328,11 @@ class Panel extends Control
 					throw "specified child not found on this panel object";
 				}
 				children[childIndex].layer = Std.int(Layer - value.layer);
-				return;
+				return children[childIndex].layer;
 			}
 			
 			trace("2:A child was not specified. No action taken");
+			return null;
 		}
 	}
 	
@@ -337,11 +340,11 @@ class Panel extends Control
 	 * Hides specified objects in the panel
 	 * @param	...objs		Objects to hide
 	 */
-	public var hide(getHide, null):Dynamic;
-	private function getHide():Dynamic
+	public var hide(get_hide, null):Dynamic;
+	private function get_hide():Dynamic
 	{
 		var me = this;
-		return Reflect.makeVarArgs(function (objs:Array<Dynamic>):Dynamic
+		return Reflect.makeVarArgs(function (objs:Array<Dynamic>)
 		{
 			var i:Int;
 			for (i in 0...objs.length)
@@ -360,11 +363,11 @@ class Panel extends Control
 	 * Shows specified objects in the panel
 	 * @param	...objs		Objects to show
 	 */
-	public var show(getShow, null):Dynamic;
-	private function getShow():Dynamic
+	public var show(get_show, null):Dynamic;
+	private function get_show():Dynamic
 	{
 		var me = this;
-		return Reflect.makeVarArgs(function (objs:Array<Dynamic>):Dynamic
+		return Reflect.makeVarArgs(function (objs:Array<Dynamic>)
 		{
 			var i:Int;
 			for (i in 0...objs.length)

@@ -12,12 +12,12 @@ import flash.display.BitmapData;
 class Control extends Entity
 {
 
-	public static var defaultSkin(get_defaultSkin, set_defaultSkin):BitmapData;
+	@:isVar public static var defaultSkin(get_defaultSkin, set_defaultSkin):BitmapData;
 	static function get_defaultSkin() {
 		if (defaultSkin != null) 
 			return defaultSkin;
 		else
-			return defaultSkin = nme.Assets.getBitmapData("gfx/ui/defaultSkin.png");
+			return defaultSkin = openfl.Assets.getBitmapData("gfx/ui/defaultSkin.png");
 	}
 	static function set_defaultSkin(v) {
 		return defaultSkin = v;

@@ -70,9 +70,9 @@ class Label extends Control
 		_textBuffer.draw(_textField);
 	}
 	
-	public var text(getText, setText):String;
-	private function getText():String { return _textField.text; }
-	private function setText(value:String):String {
+	public var text(get_text, set_text):String;
+	private function get_text():String { return _textField.text; }
+	private function set_text(value:String):String {
 		var color = _textField.textColor;
 		_textField.text = value;
 		_textField.setTextFormat(_format);
@@ -80,40 +80,40 @@ class Label extends Control
 		return value;
 	}
 	
-	public var color(getColor, setColor):Int;
-	private function getColor():Int { return _textField.textColor; }
-	private function setColor(value:Int):Int {
+	public var color(get_color, set_color):Int;
+	private function get_color():Int { return _textField.textColor; }
+	private function set_color(value:Int):Int {
 		_textField.textColor = value;
 		return value;
 	}
 	
-	public var backgroundColor(getBackgroundColor, setBackgroundColor):Int;
-	private function getBackgroundColor():Int { return _textField.backgroundColor; }
-	private function setBackgroundColor(value:Int):Int {
+	public var backgroundColor(get_backgroundColor, set_backgroundColor):Int;
+	private function get_backgroundColor():Int { return _textField.backgroundColor; }
+	private function set_backgroundColor(value:Int):Int {
 		_textField.backgroundColor = value;
 		return value;
 	}
 	
-	public var length(getLength, null):Int;
-	private function getLength():Int { return _textField.length; }
+	public var length(get_length, null):Int;
+	private function get_length():Int { return _textField.length; }
 	
-	public var size(getSize, setSize):Dynamic;
-	private function getSize():Dynamic { return _textField.defaultTextFormat.size; }
-	private function setSize(value:Dynamic):Dynamic {
+	public var size(get_size, set_size):Dynamic;
+	private function get_size():Dynamic { return _textField.defaultTextFormat.size; }
+	private function set_size(value:Dynamic):Dynamic {
 		_textField.defaultTextFormat.size = value;
 		return value;
 	}
 	
-	public var font(getFont, setFont):String;
-	private function getFont():String { return _textField.defaultTextFormat.font; }
-	private function setFont(value:String):String {
+	public var font(get_font, set_font):String;
+	private function get_font():String { return _textField.defaultTextFormat.font; }
+	private function set_font(value:String):String {
 		_textField.defaultTextFormat.font = value;
 		return value;
 	}
 	
-	public var background(getBackground, setBackground):Bool;
-	private function getBackground():Bool { return _textField.background; }
-	private function setBackground(value:Bool):Bool {
+	public var background(get_background, set_background):Bool;
+	private function get_background():Bool { return _textField.background; }
+	private function set_background(value:Bool):Bool {
 		_textField.background = value;
 		return value;
 	}

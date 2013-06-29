@@ -83,18 +83,18 @@ class Button extends Control
 	/**
 	 * Amount to pad between button edge and label
 	 */
-	public var padding(getPadding, setPadding):Int;
-	private function getPadding():Int { return _padding; }
-	private function setPadding(value:Int):Int {
+	public var padding(get_padding, set_padding):Int;
+	private function get_padding():Int { return _padding; }
+	private function set_padding(value:Int):Int {
 		_padding = value;
 		width = label.width + _padding * 2;
 		height = label.height + _padding * 2;
 		return _padding;
 	}
 	
-	public var isActive(getActive, setActive):Bool;
-	private function getActive():Bool { return _active; }
-	private function setActive(value:Bool):Bool {
+	public var isActive(get_isActive, set_isActive):Bool;
+	private function get_isActive():Bool { return _active; }
+	private function set_isActive(value:Bool):Bool {
 		_active = value;
 		return _active;
 	}
@@ -160,7 +160,7 @@ class Button extends Control
 	override public function added()
 	{
 		super.added();
-		HXP.world.add(label);
+		HXP.scene.add(label);
 		
 		if (HXP.stage != null) HXP.stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 	}
@@ -171,7 +171,7 @@ class Button extends Control
 	override public function removed()
 	{
 		super.removed();
-		HXP.world.remove(label);
+		HXP.scene.remove(label);
 		
 		if(HXP.stage != null) HXP.stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 	}

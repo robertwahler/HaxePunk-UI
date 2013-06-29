@@ -59,9 +59,9 @@ class ToggleButton extends Button
 		}
 	}
 	
-	public var checked(getChecked, setChecked):Bool;
-	private function getChecked():Bool { return _checked; }
-	private function setChecked(value:Bool):Bool {
+	public var checked(get_checked, set_checked):Bool;
+	private function get_checked():Bool { return _checked; }
+	private function set_checked(value:Bool):Bool {
 		_checked = value;
 		return _checked;
 	}

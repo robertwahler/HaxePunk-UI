@@ -10,7 +10,7 @@ class RadioButton extends ToggleButton
 	public function new(x:Float = 0, y:Float = 0, text:String = "Checkbox", id:String = "radio", checked:Bool = false, width:Int = 100, active:Bool = true)
 	{
 		_align = TextFormatAlign.LEFT;
-		_name = id;
+		_button_name = id;
 		addButton();
 		
 		super(x, y, text, width, 0, checked, active);
@@ -26,12 +26,12 @@ class RadioButton extends ToggleButton
 	
 	private function addButton()
 	{
-		var buttons:Array<RadioButton> = _buttons.get(_name);
+		var buttons:Array<RadioButton> = _buttons.get(_button_name);
 		if (buttons == null)
 		{
 			buttons = new Array<RadioButton>();
 			buttons.push(this);
-			_buttons.set(_name, buttons);
+			_buttons.set(_button_name, buttons);
 		}
 		else
 		{
@@ -39,11 +39,11 @@ class RadioButton extends ToggleButton
 		}
 	}
 	
-	override private function setChecked(value:Bool):Bool
+	override private function set_checked(value:Bool):Bool
 	{
 		if (value)
 		{
-			var buttons:Array<RadioButton> = _buttons.get(_name);
+			var buttons:Array<RadioButton> = _buttons.get(_button_name);
 			var button:RadioButton;
 			for (button in buttons)
 			{
@@ -51,7 +51,7 @@ class RadioButton extends ToggleButton
 					button._checked = false;
 			}
 		}
-		return super.setChecked(value);
+		return super.set_checked(value);
 	}
 	
 	override private function setX(value:Float):Float
@@ -61,7 +61,7 @@ class RadioButton extends ToggleButton
 		return _x;
 	}
 	
-	private var _name:String;
-	private static var _buttons:Hash<Array<RadioButton>> = new Hash<Array<RadioButton>>();
+	private var _button_name:String;
+	private static var _buttons:Map<String, Array<RadioButton>> = new Map<String, Array<RadioButton>>();
 	
 }
