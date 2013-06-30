@@ -3,6 +3,7 @@ package com.haxepunk.ui;
 import com.haxepunk.Graphic;
 import com.haxepunk.HXP;
 import com.haxepunk.graphics.Image;
+import com.haxepunk.graphics.atlas.AtlasRegion;
 import flash.display.BitmapData;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -41,10 +42,10 @@ class NineSlice extends Graphic
 	 * @param	gridSize	Grid spacing to use when chopping
 	 * @param	skin		optional custom skin
 	 */
-	public function new(width:Float, height:Float, ?clipRect:Rectangle, ?skin:BitmapData)
+	public function new(width:Float, height:Float, ?clipRect:Rectangle)
 	{
 		super();
-		_skin = (skin != null) ? skin : Control.defaultSkin;
+		_skin = Window.skin;
 		this.width = width;
 		this.height = height;
 		
@@ -76,12 +77,14 @@ class NineSlice extends Graphic
 		_xScale = (width - _clipRect.width * 2) / _clipRect.width;
 		_yScale = (height - _clipRect.height * 2) / _clipRect.height;
 		
+		#if !js
 		_topCenter.scaleX = _xScale;
 		_centerLeft.scaleY = _yScale;
 		_centerCenter.scaleX = _xScale;
 		_centerCenter.scaleY = _yScale;
 		_centerRight.scaleY = _yScale;
 		_bottomCenter.scaleX = _xScale;
+		#end
 		
 		// half
 		var hw = _clipRect.width / 2;
@@ -103,15 +106,84 @@ class NineSlice extends Graphic
 		_bottomRight.x  = hsw;
 		_bottomRight.y  = hsh;
 		
-		_topLeft.render(target, new Point(_topLeft.x + point.x, _topLeft.y + point.y), camera);
-		_topCenter.render(target, new Point(_topCenter.x + point.x, _topCenter.y + point.y), camera);
-		_topRight.render(target, new Point(_topRight.x + point.x, _topRight.y + point.y), camera);
-		_centerLeft.render(target, new Point(_centerLeft.x + point.x, _centerLeft.y + point.y), camera);
-		_centerCenter.render(target, new Point(_centerCenter.x + point.x, _centerCenter.y + point.y), camera);
-		_centerRight.render(target, new Point(_centerRight.x + point.x, _centerRight.y + point.y), camera);
-		_bottomLeft.render(target, new Point(_bottomLeft.x + point.x, _bottomLeft.y + point.y), camera);
-		_bottomCenter.render(target, new Point(_bottomCenter.x + point.x, _bottomCenter.y + point.y), camera);
-		_bottomRight.render(target, new Point(_bottomRight.x + point.x, _bottomRight.y + point.y), camera);
+		var tlp = new Point(_topLeft.x + point.x, _topLeft.y + point.y);
+		var tcp = new Point(_topCenter.x + point.x, _topCenter.y + point.y);
+		var trp = new Point(_topRight.x + point.x, _topRight.y + point.y);
+		var clp = new Point(_centerLeft.x + point.x, _centerLeft.y + point.y);
+		var ccp = new Point(_centerCenter.x + point.x, _centerCenter.y + point.y);
+		var crp = new Point(_centerRight.x + point.x, _centerRight.y + point.y);
+		var blp = new Point(_bottomLeft.x + point.x, _bottomLeft.y + point.y);
+		var bcp = new Point(_bottomCenter.x + point.x, _bottomCenter.y + point.y);
+		var brp = new Point(_bottomRight.x + point.x, _bottomRight.y + point.y);
+		
+		if (HXP.renderMode.has(RenderMode.HARDWARE))
+		{
+			// TODO
+		}
+		else
+		{
+			_topLeft.render(target, tlp, camera);
+			
+			#if js
+			for (i in 0...Math.ceil(_xScale))
+			{
+			#end
+				_topCenter.render(target, tcp, camera);
+			#if js
+				tcp.x += _topCenter.width;
+			}
+			#end
+			
+			_topRight.render(target, trp, camera);
+			
+			#if js
+			for (i in 0...Math.ceil(_yScale))
+			{
+			#end
+			_centerLeft.render(target, clp, camera);
+			#if js
+				clp.y += _centerLeft.height;
+			}
+			#end
+			
+			#if js
+			for (i in 0...Math.ceil(_yScale))
+			{
+			for (j in 0...Math.ceil(_xScale))
+			{
+			#end
+			_centerCenter.render(target, ccp, camera);
+			#if js
+				ccp.x += _centerLeft.width;
+			}
+				ccp.x = _centerCenter.x + point.x;
+				ccp.y += _centerLeft.height;
+			}
+			#end
+			
+			#if js
+			for (i in 0...Math.ceil(_yScale))
+			{
+			#end
+			_centerRight.render(target, crp, camera);
+			#if js
+				crp.y += _centerRight.height;
+			}
+			#end		
+			
+			_bottomLeft.render(target, blp, camera);
+			
+			#if js
+			for (i in 0...Math.ceil(_xScale))
+			{
+			#end
+				_bottomCenter.render(target, bcp, camera);
+			#if js
+				bcp.x += _bottomCenter.width;
+			}
+			#end
+			
+			_bottomRight.render(target, brp, camera);
+		}
 	}
-	
 }
