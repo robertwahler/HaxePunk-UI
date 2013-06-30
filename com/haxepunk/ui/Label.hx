@@ -1,125 +1,77 @@
 package com.haxepunk.ui;
 
-import flash.display.BitmapData;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-import flash.text.TextField;
-import flash.text.TextFieldType;
-import flash.text.TextFormatAlign;
-import flash.text.TextFormat;
-
-import com.haxepunk.HXP;
-import com.haxepunk.graphics.Stamp;
+import com.haxepunk.graphics.Text;
 
 /**
- * @author PigMess
- * @author Rolpege
+ * A label control.
+ *
+ * @author Valentin LEMIERE
  */
-
 class Label extends Control
-{
-	public static var defaultSize:Float = 16;
-	public static var defaultColor:Int = 0xff33cc;
-	public static var defaultBackgroundColor:Int = 0x202020;
-	public static var defaultBackground:Bool = false;
-	
-	public function new(text:String = "", x:Float = 0, y:Float = 0, width:Int = 0, height:Int = 0, ?align:TextFormatAlign)
+{	 
+	/**
+	 * Should the label redirect it's click to it's parent.
+	 */
+	public var redirectClick:Bool = false;
+	/**
+	 * The label text height.
+	 */
+	public var textHeight(get_textHeight, never):Int;
+	public function get_textHeight()
 	{
-		_format = new TextFormat("default", Label.defaultSize, Label.defaultColor);
-		
-		if (align == null)
-		{
-			if (width == 0)
-				_format.align = TextFormatAlign.LEFT;
-			else
-				_format.align = TextFormatAlign.CENTER;
-		}
-		else _format.align = align;
-		
-		_textField = new TextField();
-		this.text = text;
-		_textField.selectable = false;
-		_textField.embedFonts = true;
-		if (width != 0) _textField.width = width;
-		if (height != 0) _textField.height = height;
-		_textField.backgroundColor = Label.defaultBackgroundColor;
-		_textField.background = Label.defaultBackground;
-		_textField.maxChars = 0;
-		_textField.useRichTextClipboard = true;
-		_textField.wordWrap = false;
-		_textField.multiline = false;
-		_textField.x = x;
-		_textField.y = y;
-		
-		if (width == 0) width = Std.int(_textField.textWidth + 4);
-		if (height == 0) height = Std.int(_textField.textHeight + 4);
-		
-		super(x, y, width, height);
-		
-		_textField.width = width; // have to reset the width so everything shows...
-		_renderRect = new Rectangle(0, 0, width, height);
-		_textBuffer = new BitmapData(width, height, true, 0x00000000);
-		graphic = new Stamp(_textBuffer);
+		return this.text.height;
 	}
-	
-	override public function render()
+	/**
+	 * The parent object of the label.
+	 */
+	public var parent:Control;
+	/**
+	 * The label text width.
+	 */
+	public var textWidth(get_textWidth, never):Int;
+	public function get_textWidth()
 	{
-		super.render();
+		return this.text.width;
+	}
+	
+	/**
+	 * Constructor.
+	 *
+	 * @param	text			Test of the label.
+	 * @param	x				Position of the label on the X axis.
+	 * @param	y				Position of the label on the Y axis.
+	 * @param	redirectClick	If clicking on the label click on it's parent control.
+	 * @param	options			The options for the Text object.
+	 */
+	public function new (parent:Control, text:String = "", x:Float = 0, y:Float = 0, redirectClick:Bool = false, ?options:TextOptions)
+	{
+		this.text = new Text(text, 0, 0, options);
+		this.graphic = this.text;
 		
-		_textBuffer.fillRect(_renderRect, _textField.background ? _textField.backgroundColor : 0x00000000);
-		_textBuffer.draw(_textField);
+		super(x, y, this.textWidth, this.textHeight);
+		
+		this.parent = parent;
+		this.redirectClick = redirectClick;
 	}
 	
-	public var text(get_text, set_text):String;
-	private function get_text():String { return _textField.text; }
-	private function set_text(value:String):String {
-		var color = _textField.textColor;
-		_textField.text = value;
-		_textField.setTextFormat(_format);
-		_textField.textColor = color;
-		return value;
+	/**
+	 * When clicked redirect click to parent if set to redirect.
+	 */
+	override function click (c:Control)
+	{
+		if (this.redirectClick && this.parent.enabled)
+			this.parent.click(this.parent);
 	}
 	
-	public var color(get_color, set_color):Int;
-	private function get_color():Int { return _textField.textColor; }
-	private function set_color(value:Int):Int {
-		_textField.textColor = value;
-		return value;
-	}
-	
-	public var backgroundColor(get_backgroundColor, set_backgroundColor):Int;
-	private function get_backgroundColor():Int { return _textField.backgroundColor; }
-	private function set_backgroundColor(value:Int):Int {
-		_textField.backgroundColor = value;
-		return value;
-	}
-	
-	public var length(get_length, null):Int;
-	private function get_length():Int { return _textField.length; }
-	
-	public var size(get_size, set_size):Dynamic;
-	private function get_size():Dynamic { return _textField.defaultTextFormat.size; }
-	private function set_size(value:Dynamic):Dynamic {
-		_textField.defaultTextFormat.size = value;
-		return value;
-	}
-	
-	public var font(get_font, set_font):String;
-	private function get_font():String { return _textField.defaultTextFormat.font; }
-	private function set_font(value:String):String {
-		_textField.defaultTextFormat.font = value;
-		return value;
-	}
-	
-	public var background(get_background, set_background):Bool;
-	private function get_background():Bool { return _textField.background; }
-	private function set_background(value:Bool):Bool {
-		_textField.background = value;
-		return value;
-	}
+	/** No mouse effect on label. */
+	override public function mouseEnter (c:Control) { }
+	/** No mouse effect on label. */
+	override public function mouseDown () { }
+	/** No mouse effect on label. */
+	override public function mouseLeave () { }
 
-	private var _textField:TextField;
-	private var _renderRect:Rectangle;
-	private var _textBuffer:BitmapData;
-	private var _format:TextFormat;
+	/**
+	 * The Text object.
+	 */
+	private var text:Text;
 }

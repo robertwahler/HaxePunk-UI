@@ -1,48 +1,31 @@
 package com.haxepunk.ui;
 
 import com.haxepunk.HXP;
-import com.haxepunk.Graphic;
-import com.haxepunk.Mask;
-import com.haxepunk.graphics.Graphiclist;
-import com.haxepunk.graphics.Image;
-import com.haxepunk.graphics.Text;
-import com.haxepunk.utils.Input;
-import flash.display.BitmapData;
-import flash.events.MouseEvent;
-import flash.geom.Point;
 import flash.geom.Rectangle;
-import flash.text.TextFormatAlign;
 
 /**
+ * A button control.
+ *
  * @author Rolpege
- * @coauthor PigMess
+ * @author PigMess
+ * @author Valentin LEMIERE
  */
-
 class Button extends Control
 {	
-	/**
-	 * The button's label 
-	 */		
-	public var label:Entity;
-	
 	/**
 	 * Constructor.
 	 *  
 	 * @param x			X coordinate of the button.
 	 * @param y			Y coordinate of the button.
-	 * @param width		Width of the button's hitbox.
-	 * @param height	Height of the button's hitbox.
-	 * @param text		Text of the button
-	 * @param callback	The function that will be called when the button is pressed.
-	 * @param active	Whether the button is active or not.
+	 * @param text		Text of the button.
+	 * @param enabled	Whether the button is enabled or not.
 	 */
 	public function new(x:Float = 0, y:Float = 0, text:String = "Button", enabled:Bool = true)
 	{
-		var t = new Text(text, 4, 4, {color:0});
-		label = new Entity(x, y, t);
+		addLabel(x, y, text);
 		HXP.scene.add(label);
 		
-		super(x, y, t.width+8, t.height+8);
+		super(x, y, this.label.textWidth+8, this.label.textHeight+8);
 								
 		normal = new NineSlice(this.width, this.height, new Rectangle(0, 96, 8, 8));
 		hover = new NineSlice(this.width, this.height, new Rectangle(24, 96, 8, 8));
@@ -50,27 +33,51 @@ class Button extends Control
 		inactive = new NineSlice(this.width, this.height, new Rectangle(96, 96, 8, 8));
 		
 		this.enabled = enabled;
-		
-		setHitbox(this.width, this.height);	
 	}
 	
+	/**
+	 * Add a label to the button.
+	 *
+	 * @param	x		The position on the X axis.
+	 * @param	y		The position on the Y axis.
+	 * @param	text	The text of the label.
+	 */
+	private function addLabel (x:Float, y:Float, text:String)
+	{
+		this.label = new Label(this, text, x+6, y+4, true, {color:0});
+	}
+	
+	/**
+	 * Put the label in front of the button.
+	 */
 	override public function added ()
 	{
 		super.added();
 		HXP.scene.bringForward(label);
 	}
 	
-	override public function update ()
-	{
-		super.update();
-		
-		label.x = this.x;
-		label.y = this.y;
-	}
-	
+	/**
+	 * When the button is removed also remove the label.
+	 */
 	override public function removed ()
 	{
 		super.removed();
 		HXP.scene.remove(label);
 	}
+	
+	/**
+	 * Move the button's label to make it follow.
+	 */
+	override public function update ()
+	{
+		super.update();
+		
+		this.label.x = this.x;
+		this.label.y = this.y;
+	}
+	
+	/**
+	 * The button's label 
+	 */		
+	private var label:Label;
 }

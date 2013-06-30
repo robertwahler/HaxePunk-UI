@@ -1,106 +1,149 @@
 package com.haxepunk.ui;
 
 import com.haxepunk.Entity;
-import flash.text.TextFormatAlign;
 
 /**
+ * Base class for all controls.
+ *
  * @author PigMess
  * @author AClockWorkLemon
  * @author Rolpege
+ * @author Valentin LEMIERE
  */
-
 class Control extends Entity
 {
 	/**
-	 * Graphic of the button when active and not pressed nor overed.
-	 */	
-	public var normal:Graphic;
-	/**
-	 * Graphic of the button when the mouse overs it and it's active.
-	 */		
-	public var hover:Graphic;
-	/**
-	 * Graphic of the button when the mouse is pressing it and it's active.
-	 */		
-	public var down:Graphic;
-	/**
-	 * Graphic of the button when inactive.
+	 * If the control is enabled, ie. can we interact with it.
 	 */
-	public var inactive:Graphic;
-	
 	public var enabled(default, set_enabled):Bool = true;
 	function set_enabled (v:Bool):Bool
 	{
-		if (v) graphic = normal;
-		else graphic = inactive;
+		if (v) 
+			this.graphic = this.normal;
+		else 
+			this.graphic = this.inactive;
 		
 		return this.enabled = v;
 	}
-	
-	public function mouseDown ()
-	{
-		this.graphic = this.down;
-	}
-	
-	public function mouseEnter ()
-	{
-		this.graphic = this.hover;
-		if(this.onHover != null) this.onHover(this);
-	}
-	
-	public function mouseLeave ()
-	{
-		if (this.enabled)
-			this.graphic = this.normal;
-	}
-	
-	public function click (c:Control)
-	{
-		if (onClick != null) onClick(c);
-	}
-	
 	/**
-	 * This function will be called when the button is pressed. 
+	 * Graphic of the control when the mouse is pressing it and it's active.
 	 */		
-	public dynamic function onClick (c:Control) { }
-	
+	public var down:Graphic;
 	/**
-	 * This function will be called when the mouse overs the button. 
+	 * Graphic of the control when the mouse overs it and it's active.
 	 */		
-	public dynamic function onHover(button:Control) { }
-
-	/** class constructor
-	 * @param x - position of the component on the X axis
-	 * @param y - position of the component on the Y axis
-	 * @param width - width of the component
-	 * @param height - height of the component
+	public var hover:Graphic;
+	/**
+	 * Graphic of the control when inactive.
 	 */
-	public function new(x:Float = 0, y:Float = 0, width:Int = 1, height:Int = 1) 
+	public var inactive:Graphic;
+	/**
+	 * Graphic of the control when active and not pressed nor overed.
+	 */	
+	public var normal:Graphic;
+	
+	/** 
+	 * Constructor.
+	 *
+	 * @param	x		Position of the control on the X axis.
+	 * @param	y		Position of the control on the Y axis.
+	 * @param	width	Width of the control.
+	 * @param 	height	Height of the control.
+	 */
+	public function new(x:Float = 0, y:Float = 0, width:Int = 0, height:Int = 0) 
 	{
 		super(x, y);
 		
 		this.width = width;
 		this.height = height;		
 		
+		// Used to detect mouse actions.
 		this.type = "ui_control";
+		
+		setHitbox(this.width, this.height);
 	}
-
+	
+	/**
+	 * Init the x and y position of the control.
+	 */
 	public override function added ()
 	{
 		super.added();
 		
-		absoluteX = x;
-		absoluteY = y;
+		this.screenX = x;
+		this.screenY = y;
 	}
+	
+	/**
+	 * The control was cliked.
+	 *
+	 * @param	c	The control clicked.
+	 */
+	public function click (c:Control)
+	{
+		if (this.onClick != null) 
+			this.onClick(c);
+	}
+	
+	/**
+	 * The mouse is on the control.
+	 *
+	 * @param	c	The control bellow the mouse.
+	 */
+	public function mouseEnter (c:Control)
+	{
+		this.graphic = this.hover;
+		
+		if(this.onHover != null) 
+			this.onHover(c);
+	}
+	
+	/**
+	 * The mouse button is clicked, but not yet released.
+	 */
+	public function mouseDown ()
+	{
+		this.graphic = this.down;
+	}	
+	
+	/**
+	 * The mouse leaved the control.
+	 */
+	public function mouseLeave ()
+	{
+		if (this.enabled)
+			this.graphic = this.normal;
+	}
+	
+	/**
+	 * This function will be called when the button is pressed.
+	 * You can change the function pointed by onClick.
+	 */		
+	public dynamic function onClick (c:Control) { }
+	
+	/**
+	 * This function will be called when the mouse overs the button. 
+	 * You can change the function pointed by onHover.
+	 */		
+	public dynamic function onHover (c:Control) { }
 
+	/**
+	 * Replace the control if the camera moved.
+	 */
 	override public function update ()
 	{
-		x = absoluteX + HXP.camera.x;
-		y = absoluteY + HXP.camera.y;
+		this.x = this.screenX + HXP.camera.x;
+		this.y = this.screenY + HXP.camera.y;
 		
 		super.update();
 	}
 
-	private var absoluteX:Float;
-	private var absoluteY:Float;
+	/**
+	 * Hold the x position on the screen of the control.
+	 */
+	private var screenX:Float;
+	/**
+	 * Hold the y position on the screen of the control.
+	 */
+	private var screenY:Float;
 }
