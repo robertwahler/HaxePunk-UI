@@ -58,7 +58,7 @@ class Window extends Entity
 		{
 			var c = cast(e, Control);
 			if (!c.enabled || !Input.mouseReleased) return;
-			if(c.onClick != null) c.onClick(c);
+			c.click(c);
 		}
 	}
 	

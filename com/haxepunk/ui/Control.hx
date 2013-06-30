@@ -54,10 +54,15 @@ class Control extends Entity
 			this.graphic = this.normal;
 	}
 	
+	public function click (c:Control)
+	{
+		if (onClick != null) onClick(c);
+	}
+	
 	/**
 	 * This function will be called when the button is pressed. 
 	 */		
-	public dynamic function onClick(button:Control) { }
+	public dynamic function onClick (c:Control) { }
 	
 	/**
 	 * This function will be called when the mouse overs the button. 

@@ -6,66 +6,44 @@ import flash.geom.Rectangle;
 
 class ToggleButton extends Button
 {
-	
 	public var hoverDown:Graphic;
 	public var inactiveDown:Graphic;
 	
-	public function new(x:Float = 0, y:Float = 0, text:String = "Toggle", width:Int = 0, height:Int = 0, checked:Bool = false, active:Bool = true)
+	public function new(x:Float = 0, y:Float = 0, text:String = "Toggle", checked:Bool = false, enabled:Bool = true)
 	{
-		super(x, y, text, width, height, active);
+		super(x, y, text, active);
 		hoverDown = down;
 		inactiveDown = new NineSlice(this.width, this.height, new Rectangle(72, 96, 8, 8));
 		this.checked = checked;
+		this.enabled = enabled;
 	}
 	
-	override public function update()
+	override function set_enabled (v:Bool):Bool
 	{
-		if (!_active)
-		{
-			if (checked)
-				graphic = inactiveDown;
-			else
-				graphic = inactive;
-			return;
-		}
-			
-		if (collidePoint(x, y, Input.mouseX, Input.mouseY))
-		{
-			if (Input.mousePressed)
-			{
-				checked = !checked;
-			}
-			else
-			{
-				if (_checked)
-					graphic = hoverDown;
-				else
-					graphic = hover;
-				
-				if(!_overCalled)
-				{
-					if(onHover != null) onHover(this);
-					_overCalled = true;
-				}
-			}
-		}
-		else
-		{
-			_overCalled = false;
-			if (_checked)
-				graphic = down;
-			else
-				graphic = normal;
-		}
+		if (v) graphic = this.checked ? this.down : this.normal;
+		else graphic = this.checked ? inactiveDown : inactive;
+		
+		return this.enabled = v;
 	}
 	
-	public var checked(get_checked, set_checked):Bool;
-	private function get_checked():Bool { return _checked; }
-	private function set_checked(value:Bool):Bool {
-		_checked = value;
-		return _checked;
+	override public function mouseEnter ()
+	{
+		this.graphic = this.checked ? hoverDown : this.hover;
+		if(this.onHover != null) this.onHover(this);
 	}
 	
-	private var _checked:Bool;
+	override public function mouseLeave ()
+	{
+		if (this.enabled)
+			this.graphic = this.checked ? this.down : this.normal;
+	}
+	
+	override public function click (c:Control)
+	{
+		this.checked = !this.checked;
+		super.click(c);
+	}
+	
+	private var checked:Bool;
 	
 }
