@@ -9,12 +9,18 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 /**
- * ...
+ * Cut an image in 9 to scale it without artifacts.
+ *
  * @author AClockWorkLemon
+ * @author Valentin LEMIERE
  */
 class NineSlice extends Graphic
 {
+	#if (flash||js)
 	private var _skin:BitmapData;
+	#else
+	private var _skin:AtlasRegion;
+	#end
 	
 	private var _topLeft:Image;
 	private var _topCenter:Image;
@@ -116,74 +122,67 @@ class NineSlice extends Graphic
 		var bcp = new Point(_bottomCenter.x + point.x, _bottomCenter.y + point.y);
 		var brp = new Point(_bottomRight.x + point.x, _bottomRight.y + point.y);
 		
-		if (HXP.renderMode.has(RenderMode.HARDWARE))
+		_topLeft.render(target, tlp, camera);
+		
+		#if js
+		for (i in 0...Math.ceil(_xScale))
 		{
-			// TODO
+		#end
+			_topCenter.render(target, tcp, camera);
+		#if js
+			tcp.x += _topCenter.width;
 		}
-		else
+		#end
+		
+		_topRight.render(target, trp, camera);
+		
+		#if js
+		for (i in 0...Math.ceil(_yScale))
 		{
-			_topLeft.render(target, tlp, camera);
-			
-			#if js
-			for (i in 0...Math.ceil(_xScale))
-			{
-			#end
-				_topCenter.render(target, tcp, camera);
-			#if js
-				tcp.x += _topCenter.width;
-			}
-			#end
-			
-			_topRight.render(target, trp, camera);
-			
-			#if js
-			for (i in 0...Math.ceil(_yScale))
-			{
-			#end
-			_centerLeft.render(target, clp, camera);
-			#if js
-				clp.y += _centerLeft.height;
-			}
-			#end
-			
-			#if js
-			for (i in 0...Math.ceil(_yScale))
-			{
-			for (j in 0...Math.ceil(_xScale))
-			{
-			#end
-			_centerCenter.render(target, ccp, camera);
-			#if js
-				ccp.x += _centerLeft.width;
-			}
-				ccp.x = _centerCenter.x + point.x;
-				ccp.y += _centerLeft.height;
-			}
-			#end
-			
-			#if js
-			for (i in 0...Math.ceil(_yScale))
-			{
-			#end
-			_centerRight.render(target, crp, camera);
-			#if js
-				crp.y += _centerRight.height;
-			}
-			#end		
-			
-			_bottomLeft.render(target, blp, camera);
-			
-			#if js
-			for (i in 0...Math.ceil(_xScale))
-			{
-			#end
-				_bottomCenter.render(target, bcp, camera);
-			#if js
-				bcp.x += _bottomCenter.width;
-			}
-			#end
-			
-			_bottomRight.render(target, brp, camera);
+		#end
+		_centerLeft.render(target, clp, camera);
+		#if js
+			clp.y += _centerLeft.height;
 		}
+		#end
+		
+		#if js
+		for (i in 0...Math.ceil(_yScale))
+		{
+		for (j in 0...Math.ceil(_xScale))
+		{
+		#end
+		_centerCenter.render(target, ccp, camera);
+		#if js
+			ccp.x += _centerLeft.width;
+		}
+			ccp.x = _centerCenter.x + point.x;
+			ccp.y += _centerLeft.height;
+		}
+		#end
+		
+		#if js
+		for (i in 0...Math.ceil(_yScale))
+		{
+		#end
+		_centerRight.render(target, crp, camera);
+		#if js
+			crp.y += _centerRight.height;
+		}
+		#end		
+		
+		_bottomLeft.render(target, blp, camera);
+		
+		#if js
+		for (i in 0...Math.ceil(_xScale))
+		{
+		#end
+			_bottomCenter.render(target, bcp, camera);
+		#if js
+			bcp.x += _bottomCenter.width;
+		}
+		#end
+		
+		_bottomRight.render(target, brp, camera);
 	}
 }

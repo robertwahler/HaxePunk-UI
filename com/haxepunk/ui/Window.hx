@@ -1,9 +1,17 @@
 package com.haxepunk.ui;
 
 import com.haxepunk.HXP;
+import com.haxepunk.graphics.atlas.Atlas;
+import com.haxepunk.graphics.atlas.AtlasRegion;
 import com.haxepunk.utils.Input;
 import flash.events.MouseEvent;
 import flash.display.BitmapData;
+
+#if (flash||js)
+typedef Img = BitmapData;
+#else
+typedef Img = AtlasRegion;
+#end
 
 /**
  * Main UI class, used to add/remove controls and to dispatch events.
@@ -15,13 +23,21 @@ class Window extends Entity
 	/**
 	 * The skin used to render all controls.
 	 */
-	@:isVar public static var skin(get_skin, set_skin):BitmapData;
+	@:isVar public static var skin(get_skin, set_skin):Img;
 	static function get_skin() 
 	{
 		if (skin != null)
 			return skin;
 		else
-			return skin = openfl.Assets.getBitmapData("gfx/ui/defaultSkin.png");
+		{
+			var bd = openfl.Assets.getBitmapData("gfx/ui/defaultSkin.png");
+			
+			#if (flash||js)
+			return skin = bd;
+			#else
+			return Atlas.loadImageAsRegion("gfx/ui/defaultSkin.png");//bd);
+			#end
+		}
 	}
 	static function set_skin(s) { return skin = s; }
 		
@@ -30,7 +46,7 @@ class Window extends Entity
 	 *
 	 * @param	skin	The skin to use for all controls.
 	 */
-	public function new (?skin:BitmapData)
+	public function new (?skin:Img)
 	{
 		super();
 		
